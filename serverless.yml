@@ -3,45 +3,59 @@ provider:
   name: aws
   runtime: nodejs12.x
 functions:
-  hello:
-    handler: handler.hello
-  create:
-    handler: handler.create
+  createUser:
+    handler: handler.createUser
     events:
       -
         http:
-          path: notes
+          path: users
           method: post
           cors: true
-  getOne:
-    handler: handler.getOne
+  getOneTime:
+    handler: handler.getOneTime
     events:
       -
         http:
-          path: 'notes/{id}'
+          path: 'times/{id}'
           method: get
           cors: true
-  getAll:
-    handler: handler.getAll
+  getOneUser:
+    handler: handler.getOneUser
     events:
       -
         http:
-          path: notes
+          path: 'users/{id}'
           method: get
           cors: true
-  update:
-    handler: handler.update
+  getAllTimes:
+    handler: handler.getAllTimes
     events:
       -
         http:
-          path: 'notes/{id}'
+          path: times
+          method: get
+          cors: true
+  getAllUsers:
+    handler: handler.getAllUsers
+    events:
+      -
+        http:
+          path: users
+          method: get
+          cors: true
+  updateUser:
+    handler: handler.updateUser
+    events:
+      -
+        http:
+          path: 'users/{id}'
           method: put
           cors: true
-  delete:
-    handler: handler.delete
+  deleteUser:
+    handler: handler.deleteUser
     events:
       -
         http:
-          path: 'notes/{id}'
+          path: 'users/{id}'
           method: delete
           cors: true

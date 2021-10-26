@@ -1,22 +1,18 @@
 'use strict';
 const connectToDatabase = require('./db');
-const Note = require('./notes.model.js');
+const Times = require('./times.model.js');
+const Users = require('./users.model.js');
 require('dotenv').config({ path: './variables.env' });
 
-module.exports.hello = (event, context, callback) => {
-    console.log('Hello World');
-    callback(null, 'Hello World');
-};
-
-module.exports.create = (event, context, callback) => {
+module.exports.createUser = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     connectToDatabase().then(() => {
-        Note.create(JSON.parse(event.body))
-            .then(note =>
+        Users.create(JSON.parse(event.body))
+            .then(user =>
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(note)
+                    body: JSON.stringify(user)
                 })
             )
             .catch(err =>
@@ -31,15 +27,15 @@ module.exports.create = (event, context, callback) => {
     });
 };
 
-module.exports.getOne = (event, context, callback) => {
+module.exports.getOneTime = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     connectToDatabase().then(() => {
-        Note.findById(event.pathParameters.id)
-            .then(note =>
+        Times.findById(event.pathParameters.id)
+            .then(time =>
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(note)
+                    body: JSON.stringify(time)
                 })
             )
             .catch(err =>
@@ -54,15 +50,38 @@ module.exports.getOne = (event, context, callback) => {
     });
 };
 
-module.exports.getAll = (event, context, callback) => {
+module.exports.getOneUser = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     connectToDatabase().then(() => {
-        Note.find()
-            .then(notes =>
+        Users.findById(event.pathParameters.id)
+            .then(user =>
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(notes)
+                    body: JSON.stringify(user)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the note.'
+                })
+            );
+    });
+};
+
+module.exports.getAllTimes = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Times.find()
+            .then(times =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(times)
                 })
             )
             .catch(err =>
@@ -77,17 +96,40 @@ module.exports.getAll = (event, context, callback) => {
     });
 };
 
-module.exports.update = (event, context, callback) => {
+module.exports.getAllUsers = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     connectToDatabase().then(() => {
-        Note.findByIdAndUpdate(event.pathParameters.id, JSON.parse(event.body), {
+        Users.find()
+            .then(users =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(users)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the notes.'
+                })
+            );
+    });
+};
+
+module.exports.updateUser = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Users.findByIdAndUpdate(event.pathParameters.id, JSON.parse(event.body), {
                 new: true
             })
-            .then(note =>
+            .then(user =>
                 callback(null, {
                     statusCode: 200,
-                    body: JSON.stringify(note)
+                    body: JSON.stringify(user)
                 })
             )
             .catch(err =>
@@ -102,17 +144,17 @@ module.exports.update = (event, context, callback) => {
     });
 };
 
-module.exports.delete = (event, context, callback) => {
+module.exports.deleteUser = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     connectToDatabase().then(() => {
-        Note.findByIdAndRemove(event.pathParameters.id)
-            .then(note =>
+        Users.findByIdAndRemove(event.pathParameters.id)
+            .then(user =>
                 callback(null, {
                     statusCode: 200,
                     body: JSON.stringify({
-                        message: 'Removed note with id: ' + note._id,
-                        note: note
+                        message: 'Removed note with id: ' + user._id,
+                        user: user
                     })
                 })
             )
